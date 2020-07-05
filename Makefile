@@ -3,13 +3,14 @@
 all:
 	RUSTFLAGS='-C link-arg=-s' cargo build --release --target wasm32-unknown-unknown --locked
 	wasm-opt -Os ./target/wasm32-unknown-unknown/release/*.wasm -o ./contract.wasm
+	cat contract.wasm | gzip -9 > contract.wasm.gz
 
 clean:
 	cargo clean
 	-rm -f ./contract.wasm
 
 store:
-	secretcli tx compute store contract.wasm --source "https://github.com/enigmampc/BenchmarkSecretContracts" --from mykey --yes --gas 1000000
+	secretcli tx compute store contract.wasm.gz --source "https://github.com/enigmampc/BenchmarkSecretContracts" --from mykey --yes --gas 1000000
 
 init:
 	$(eval CODE_ID := $(shell secretcli q compute list-code | jq -c '.[] | select(.source == "https://github.com/enigmampc/BenchmarkSecretContracts")' | tail -1 | jq .id))
@@ -22,4 +23,4 @@ benchmark-compute:
 	$(eval ACCOUNT_NUMBER := $(shell secretcli q account $(ACCOUNT_ADDRESS) | jq '.value.account_number'))
 	$(eval SEQUENCE_START := $(shell secretcli q account $(ACCOUNT_ADDRESS) | jq '(.value.sequence)'))
 	$(eval SEQUENCE_END := $(shell secretcli q account $(ACCOUNT_ADDRESS) | jq '(.value.sequence + 10)'))
-	seq "$(SEQUENCE_START)" "$(SEQUENCE_END)" | parallel -P 1 -v --bar secretcli tx compute execute "$(CONTRACT_ADDRESS)" '{"calculate":{"x":1,"y":2}}}' --from mykey --yes -s {} -a "$(ACCOUNT_NUMBER)"
+	seq "$(SEQUENCE_START)" "$(SEQUENCE_END)" | parallel --bar secretcli tx compute execute "$(CONTRACT_ADDRESS)" '{\"calculate\":{\"x\":1,\"y\":2}}' --from mykey --yes -s {} -a "$(ACCOUNT_NUMBER)" -b async
