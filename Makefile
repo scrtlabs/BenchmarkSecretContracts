@@ -21,8 +21,4 @@ init:
 benchmark-compute:
 	$(eval CODE_ID := $(shell secretcli q compute list-code | jq -c '.[] | select(.source == "https://github.com/enigmampc/BenchmarkSecretContracts")' | tail -1 | jq .id))
 	$(eval CONTRACT_ADDRESS := $(shell secretcli q compute list-contract-by-code $(CODE_ID) | jq -rc '.[].address' | head -1))
-	$(eval ACCOUNT_ADDRESS := $(shell secretcli keys show -a mykey))
-	$(eval ACCOUNT_NUMBER := $(shell secretcli q account $(ACCOUNT_ADDRESS) | jq '.value.account_number'))
-	$(eval SEQUENCE_START := $(shell secretcli q account $(ACCOUNT_ADDRESS) | jq '(.value.sequence)'))
-	$(eval SEQUENCE_END := $(shell secretcli q account $(ACCOUNT_ADDRESS) | jq '(.value.sequence + 10)'))
-	seq "$(SEQUENCE_START)" "$(SEQUENCE_END)" | parallel --bar secretcli tx compute execute "$(CONTRACT_ADDRESS)" '{\"calculate\":{\"x\":1,\"y\":2}}' --from mykey --yes -s {} -a "$(ACCOUNT_NUMBER)" -b async
+	seq 1 1000 | parallel -P 1000 --bar secretcli tx compute execute "$(CONTRACT_ADDRESS)" '{\"calculate\":{\"x\":1,\"y\":2}}' --from {} --yes
