@@ -155,7 +155,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "secret-holdem"
+name = "secret-contract-benchmark"
 version = "0.0.1"
 dependencies = [
  "cosmwasm-std",
