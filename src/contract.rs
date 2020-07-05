@@ -17,10 +17,6 @@ pub fn init<S: Storage, A: Api, Q: Querier>(
     Ok(InitResponse::default())
 }
 
-/////////////////////////////// Handle ///////////////////////////////
-//
-//////////////////////////////////////////////////////////////////////
-
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
 #[serde(rename_all = "snake_case")]
 pub enum HandleMsg {
@@ -44,11 +40,6 @@ pub fn handle<S: Storage, A: Api, Q: Querier>(
         }
     }
 }
-
-/////////////////////////////// Query ///////////////////////////////
-// These are getters, we only return what's public
-// player get their private information as a response to txs (handle)
-///////////////////////////////////////////////////////////////////////
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
 #[serde(rename_all = "snake_case")]
