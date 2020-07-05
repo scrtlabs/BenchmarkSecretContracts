@@ -10,11 +10,11 @@ clean:
 	-rm -f ./contract.wasm
 
 store:
-	secretcli tx compute store contract.wasm.gz --source "https://github.com/enigmampc/BenchmarkSecretContracts" --from mykey --yes --gas 1000000
+	secretcli tx compute store contract.wasm.gz --source "https://github.com/enigmampc/BenchmarkSecretContracts" --from mykey --yes --gas 1000000 -b block
 
 init:
 	$(eval CODE_ID := $(shell secretcli q compute list-code | jq -c '.[] | select(.source == "https://github.com/enigmampc/BenchmarkSecretContracts")' | tail -1 | jq .id))
-	secretcli tx compute instantiate "$(CODE_ID)" '{"init":{}}' --label benchmark --from mykey --yes
+	secretcli tx compute instantiate "$(CODE_ID)" '{}' --label benchmark --from mykey --yes -b block | jq .txhash | xargs secretcli q compute tx
 
 benchmark-compute:
 	$(eval CODE_ID := $(shell secretcli q compute list-code | jq -c '.[] | select(.source == "https://github.com/enigmampc/BenchmarkSecretContracts")' | tail -1 | jq .id))
