@@ -1,6 +1,6 @@
 use cosmwasm_std::{
-    Api, Binary, Env, Extern, HandleResponse, HandleResult, InitResponse, InitResult,
-    MigrateResponse, Querier, QueryResponse, QueryResult, StdResult, Storage,
+    Api, Binary, Env, Extern, HandleResponse, HandleResult, InitResponse, InitResult, Querier,
+    QueryResponse, QueryResult, Storage,
 };
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
@@ -50,21 +50,4 @@ pub fn query<S: Storage, A: Api, Q: Querier>(
     _msg: QueryMsg,
 ) -> QueryResult {
     return Ok(QueryResponse::default());
-}
-
-/////////////////////////////// Migrate ///////////////////////////////
-// Isn't supported by the Secret Network, but we must declare this to
-// comply with CosmWasm 0.9 API
-///////////////////////////////////////////////////////////////////////
-
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
-#[serde(rename_all = "snake_case")]
-pub enum MigrateMsg {}
-
-pub fn migrate<S: Storage, A: Api, Q: Querier>(
-    _deps: &mut Extern<S, A, Q>,
-    _env: Env,
-    _msg: MigrateMsg,
-) -> StdResult<MigrateResponse> {
-    Ok(MigrateResponse::default())
 }
